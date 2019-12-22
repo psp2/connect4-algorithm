@@ -98,7 +98,7 @@ def validate_win(board: list, board_size: int, row: int, col: int, player: int) 
     return False
 
 
-def minimax(board: list, board_size: int, row: int, col: int, max_player: int, cur_depth: int) -> int:
+def minimax(board: list, board_size: int, row: int, col: int, max_player: int, cur_depth: int, max_depth: int) -> int:
     # Only need to check for AI Win if it's currently Player 1's turn (the AI just completed its move)
     if not max_player and validate_win(board, board_size, row, col, 2):
         return 10
@@ -106,7 +106,7 @@ def minimax(board: list, board_size: int, row: int, col: int, max_player: int, c
     if max_player and validate_win(board, board_size, row, col, 1):
         return -10
     # Check for Tie or Max Depth Reached
-    if all(board[0]) or cur_depth == 5:
+    if all(board[0]) or cur_depth == 7:
         return 0
     # Maximizing Player: Player 2 (AI)
     if max_player:
@@ -122,7 +122,7 @@ def minimax(board: list, board_size: int, row: int, col: int, max_player: int, c
                         break
                     row += 1
                 board[row][col] = 2
-                best_score = max(best_score, minimax(board, board_size, row, col, not max_player, cur_depth + 1))
+                best_score = max(best_score, minimax(board, board_size, row, col, not max_player, cur_depth + 1, max_depth))
                 board[row][col] = 0
         return best_score
     # Minimizing Player: Player 1
@@ -139,7 +139,7 @@ def minimax(board: list, board_size: int, row: int, col: int, max_player: int, c
                         break
                     row += 1
                 board[row][col] = 1
-                best_score = min(best_score, minimax(board, board_size, row, col, not max_player, cur_depth + 1))
+                best_score = min(best_score, minimax(board, board_size, row, col, not max_player, cur_depth + 1, max_depth))
                 board[row][col] = 0
         return best_score
 
@@ -164,12 +164,12 @@ def necessary_move(board: list, board_size: int, cur_player: int) -> int:
     return -1
 
 
-def choose_column(board: list, board_size: int) -> int:
+def choose_column(board: list, board_size: int, difficulty: int) -> int:
     """
     Selects column for AI Player.
 
     First checks for immediate opportunities (wins) or vulnerabilities (losses).
-    If neither of the above are present, uses the minimax algorithm.
+    If neither of the above are present, uses the minimax algorithm using difficulty as maximum recursion depth.
     """
     # First check for immediate opportunities or vulnerabilities for AI
     # Opportunities for an immediate win take priority.
@@ -194,7 +194,7 @@ def choose_column(board: list, board_size: int) -> int:
                     break
                 row += 1
             board[row][col] = 2
-            cur_score = minimax(board, board_size, row, col, False, 1)
+            cur_score = minimax(board, board_size, row, col, False, 1, difficulty)
             board[row][col] = 0
             if cur_score > best_col_score:
                 best_col_score = cur_score
@@ -204,16 +204,28 @@ def choose_column(board: list, board_size: int) -> int:
 
 def play_game(board_size: int, num_players: int) -> int:
     if num_players == 1:
+        while True:
+            try:
+                difficulty = int(input('Select difficulty level from 1 (Easy) to 6 (Hard): '))
+            except ValueError:
+                print('Invalid Input')
+                continue
+            if difficulty < 1 or difficulty > 6:
+                print('Invalid Difficulty Level')
+            else:
+                difficulty += 3
+                break
         print('You are Player 1. The CPU is Player 2.')
     cur_player = 1
     board = [[0]*board_size for row in range(board_size)]
     while True:
-        print(*board, sep='\n')
         if cur_player == 2 and num_players == 1:
+            print('--------------')
             print('CPU')
-            selected_col = choose_column(board, board_size)
+            selected_col = choose_column(board, board_size, difficulty)
             print('CPU selects column: ' + str(selected_col+1))
         else:
+            print(*board, sep='\n')
             print('Player ' + str(cur_player))
             while True:
                 try:
@@ -269,11 +281,11 @@ def run_game():
     # Select board size
     while True:
         try:
-            board_size = int(input('Select a board length from 6 to 10: '))
+            board_size = int(input('Select a board length from 6 to 8: '))
         except ValueError:
             print('Invalid Input')
             continue
-        if board_size > 5 and board_size < 11:
+        if board_size > 5 and board_size < 9:
             break
         else:
             print('Invalid Board Size')
