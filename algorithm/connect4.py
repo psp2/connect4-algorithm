@@ -113,7 +113,7 @@ def minimax(board: list, board_size: int, row: int, col: int, max_player: int, c
     if max_player and validate_win(board, board_size, row, col, 1):
         return -10
     # Check for Tie or Max Depth Reached
-    if all(board[0]) or cur_depth == 7:
+    if all(board[0]) or cur_depth == max_depth:
         return 0
     # Maximizing Player: Player 2 (AI)
     if max_player:
@@ -213,14 +213,14 @@ def play_game(board_size: int, num_players: int) -> int:
     if num_players == 1:
         while True:
             try:
-                difficulty = int(input('Select difficulty level from 1 (Easy) to 6 (Hard): '))
+                difficulty = int(input('Select difficulty level from 1 (Easy) to 10 (Hard): '))
             except ValueError:
                 print('Invalid Input')
                 continue
-            if difficulty < 1 or difficulty > 6:
+            if difficulty < 1 or difficulty > 10:
                 print('Invalid Difficulty Level')
             else:
-                difficulty += 3
+                difficulty += 2
                 break
         print('You are Player 1. The CPU is Player 2.')
     cur_player = 1
