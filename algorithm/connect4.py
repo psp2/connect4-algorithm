@@ -99,6 +99,13 @@ def validate_win(board: list, board_size: int, row: int, col: int, player: int) 
 
 
 def minimax(board: list, board_size: int, row: int, col: int, max_player: int, cur_depth: int, max_depth: int) -> int:
+    """
+    Possible column selections are scored via minimax algorithm.
+    The maximizing player is the AI, and the minimizing player is Player 1.
+    This implementation assumes Player 1 will always choose most rational option.
+
+    For more details on Minimax Algorithm, see Github README.
+    """
     # Only need to check for AI Win if it's currently Player 1's turn (the AI just completed its move)
     if not max_player and validate_win(board, board_size, row, col, 2):
         return 10
