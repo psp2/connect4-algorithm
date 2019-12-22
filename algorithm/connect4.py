@@ -213,11 +213,11 @@ def play_game(board_size: int, num_players: int) -> int:
     if num_players == 1:
         while True:
             try:
-                difficulty = int(input('Select difficulty level from 1 (Easy) to 10 (Hard): '))
+                difficulty = int(input('Select difficulty level from 1 (Easy) to 8 (Hard): '))
             except ValueError:
                 print('Invalid Input')
                 continue
-            if difficulty < 1 or difficulty > 10:
+            if difficulty < 1 or difficulty > 8:
                 print('Invalid Difficulty Level')
             else:
                 difficulty += 2
