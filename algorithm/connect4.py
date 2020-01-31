@@ -98,7 +98,7 @@ def validate_win(board: list, board_size: int, row: int, col: int, player: int) 
     return False
 
 
-def minimax(board: list, board_size: int, row: int, col: int, max_player: int, cur_depth: int, max_depth: int) -> int:
+def minimax(board: list, board_size: int, row: int, col: int, max_player: int, cur_depth: int, max_depth: int, alpha: int, beta: int) -> int:
     """
     Possible column selections are scored via minimax algorithm.
     The maximizing player is the AI, and the minimizing player is Player 1.
@@ -129,8 +129,11 @@ def minimax(board: list, board_size: int, row: int, col: int, max_player: int, c
                         break
                     row += 1
                 board[row][col] = 2
-                best_score = max(best_score, minimax(board, board_size, row, col, not max_player, cur_depth + 1, max_depth))
+                best_score = max(best_score, minimax(board, board_size, row, col, not max_player, cur_depth + 1, max_depth, alpha, beta))
                 board[row][col] = 0
+                alpha = max(alpha, best_score)
+                if beta <= alpha:
+                    break
         return best_score
     # Minimizing Player: Player 1
     else:
@@ -146,8 +149,11 @@ def minimax(board: list, board_size: int, row: int, col: int, max_player: int, c
                         break
                     row += 1
                 board[row][col] = 1
-                best_score = min(best_score, minimax(board, board_size, row, col, not max_player, cur_depth + 1, max_depth))
+                best_score = min(best_score, minimax(board, board_size, row, col, not max_player, cur_depth + 1, max_depth, alpha, beta))
                 board[row][col] = 0
+                beta = min(beta, best_score)
+                if beta <= alpha:
+                    break
         return best_score
 
 
@@ -188,7 +194,7 @@ def choose_column(board: list, board_size: int, difficulty: int) -> int:
         return vulnerability
 
     # If no necessary move is present, use minimax algorithm to determine optimal move
-    best_col = -1
+    col_scores = []
     best_col_score = -1 * sys.maxsize
     for col in range(board_size):
         if board[0][col] == 0:
@@ -201,11 +207,12 @@ def choose_column(board: list, board_size: int, difficulty: int) -> int:
                     break
                 row += 1
             board[row][col] = 2
-            cur_score = minimax(board, board_size, row, col, False, 1, difficulty)
+            cur_score = minimax(board, board_size, row, col, False, 1, difficulty, -1 * sys.maxsize, sys.maxsize)
             board[row][col] = 0
+            col_scores.append((col, cur_score))
             if cur_score > best_col_score:
                 best_col_score = cur_score
-                best_col = col
+    best_col = random.choice([col for col, score in col_scores if score == best_col_score])
     return best_col
 
 
@@ -213,11 +220,11 @@ def play_game(board_size: int, num_players: int) -> int:
     if num_players == 1:
         while True:
             try:
-                difficulty = int(input('Select difficulty level from 1 (Easy) to 8 (Hard): '))
+                difficulty = int(input('Select difficulty level from 1 (Easy) to 9 (Hard): '))
             except ValueError:
                 print('Invalid Input')
                 continue
-            if difficulty < 1 or difficulty > 8:
+            if difficulty < 1 or difficulty > 9:
                 print('Invalid Difficulty Level')
             else:
                 difficulty += 2
