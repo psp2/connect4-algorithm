@@ -1,11 +1,31 @@
 import sys
-import random
 import signal
+import random
 from random import randint
 
 
 def sigint_handler(signum, frame):
     sys.exit(0)
+
+
+def printRed(str: str, end: str):
+    print('\033[91m{}\033[00m'.format(str), end = end)
+
+
+def printGreen(str: str, end: str):
+    print('\033[92m{}\033[00m'.format(str), end = end)
+
+
+def printBoard(board: list):
+    for row in board:
+        for item in row:
+            if item == 1:
+                printRed(item, '   ')
+            elif item == 2:
+                printGreen(item, '   ')
+            else:
+                print(item, end = '   ')
+        print('\n')
 
 
 def validate_win(board: list, board_size: int, row: int, col: int, player: int) -> bool:
@@ -229,18 +249,22 @@ def play_game(board_size: int, num_players: int) -> int:
             else:
                 difficulty += 2
                 break
-        print('You are Player 1. The CPU is Player 2.')
+        printRed('You are Player 1.\n', '')
+        printGreen('The AI is Player 2.\n', '')
     cur_player = 1
     board = [[0]*board_size for row in range(board_size)]
     while True:
         if cur_player == 2 and num_players == 1:
             print('--------------')
-            print('CPU')
+            printGreen('AI\n', '')
             selected_col = choose_column(board, board_size, difficulty)
-            print('CPU selects column: ' + str(selected_col+1))
+            print('AI selects column: ' + str(selected_col+1))
         else:
-            print(*board, sep='\n')
-            print('Player ' + str(cur_player))
+            printBoard(board)
+            if cur_player == 1:
+                printRed('Player 1\n', '')
+            else:
+                printGreen('Player 2\n', '')
             while True:
                 try:
                     selected_col = int(input('Select a column from 1 to ' + str(board_size) + ': ')) - 1
@@ -268,11 +292,11 @@ def play_game(board_size: int, num_players: int) -> int:
             row += 1
         # Validate whether the current player has won
         if validate_win(board, board_size, row, selected_col, cur_player):
-            print(*board, sep='\n')
+            printBoard(board)
             return cur_player
         # Validate whether the game can continue (if all are non-zero in the top row, the game ends in a tie)
         if all(board[0]):
-            print(*board, sep='\n')
+            printBoard(board)
             return 0
         # Switch players
         cur_player = 2 if cur_player == 1 else 1
@@ -307,13 +331,13 @@ def run_game():
     winner = play_game(board_size, num_players)
     # Results
     if winner == 1:
-        print('Player 1 has Won.')
+        printRed('Player 1 has Won.\n', '')
     elif winner == 2 and num_players == 1:
-        print('The Computer has Won.')
+        printGreen('The AI has Won.\n', '')
     elif winner == 2 and num_players == 2:
-        print('Player 2 has Won.')
+        printGreen('Player 2 has Won.\n', '')
     else:
-        print('Game ends in Tie.')
+        print('Game ends in Tie.\n')
 
 
 if __name__ == '__main__':
