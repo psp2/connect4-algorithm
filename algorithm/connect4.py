@@ -12,8 +12,8 @@ def printRed(str: str, end: str):
     print('\033[91m{}\033[00m'.format(str), end = end)
 
 
-def printGreen(str: str, end: str):
-    print('\033[92m{}\033[00m'.format(str), end = end)
+def printBlue(str: str, end: str):
+    print('\033[94m{}\033[00m'.format(str), end = end)
 
 
 def printBoard(board: list):
@@ -22,7 +22,7 @@ def printBoard(board: list):
             if item == 1:
                 printRed(item, '   ')
             elif item == 2:
-                printGreen(item, '   ')
+                printBlue(item, '   ')
             else:
                 print(item, end = '   ')
         print('\n')
@@ -250,13 +250,13 @@ def play_game(board_size: int, num_players: int) -> int:
                 difficulty += 2
                 break
         printRed('You are Player 1.\n', '')
-        printGreen('The AI is Player 2.\n', '')
+        printBlue('The AI is Player 2.\n', '')
     cur_player = 1
     board = [[0]*board_size for row in range(board_size)]
     while True:
         if cur_player == 2 and num_players == 1:
             print('--------------')
-            printGreen('AI\n', '')
+            printBlue('AI\n', '')
             selected_col = choose_column(board, board_size, difficulty)
             print('AI selects column: ' + str(selected_col+1))
         else:
@@ -264,7 +264,7 @@ def play_game(board_size: int, num_players: int) -> int:
             if cur_player == 1:
                 printRed('Player 1\n', '')
             else:
-                printGreen('Player 2\n', '')
+                printBlue('Player 2\n', '')
             while True:
                 try:
                     selected_col = int(input('Select a column from 1 to ' + str(board_size) + ': ')) - 1
@@ -333,9 +333,9 @@ def run_game():
     if winner == 1:
         printRed('Player 1 has Won.\n', '')
     elif winner == 2 and num_players == 1:
-        printGreen('The AI has Won.\n', '')
+        printBlue('The AI has Won.\n', '')
     elif winner == 2 and num_players == 2:
-        printGreen('Player 2 has Won.\n', '')
+        printBlue('Player 2 has Won.\n', '')
     else:
         print('Game ends in Tie.\n')
 
